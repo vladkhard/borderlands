@@ -6,10 +6,13 @@ from .exceptions import WrongHeightError
 
 
 class Citizen(models.Model):
-    citizen_id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    class Meta:
+        ordering = ('last_name',)
+    
+    citizen_id = models.UUIDField(primary_key=True, default=lambda: uuid4().hex, editable=False)
     first_name = models.CharField(max_length=255, blank=False, null=False)
     last_name = models.CharField(max_length=255, blank=False, null=False)
-    date_of_birth = models.DateTimeField(blank=False, null=False)
+    date_of_birth = models.DateField(blank=False, null=False)
     address = models.CharField(max_length=255, blank=False, null=False)
     phone_number = models.CharField(max_length=255, blank=False, null=False)
     height = models.IntegerField(blank=False, null=False)
