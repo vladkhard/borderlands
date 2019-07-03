@@ -13,6 +13,3 @@ class CitizenSerializer(serializers.Serializer):
     height = serializers.IntegerField()
     nationality = serializers.CharField()
     color_of_eyes = serializers.CharField()
-
-    def create(self, validated_data):
-        return Citizen.objects.create(**validated_data)
