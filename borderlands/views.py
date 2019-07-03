@@ -15,9 +15,7 @@ class CreateCitizenView(APIView):
         data = request.data
         serializer = CitizenSerializer(data=data)
         if serializer.is_valid():
-            data = serializer.validated_data
-            instance = Citizen(**data)
-            instance.save()
+            instance = serializer.save()
             return Response(CitizenSerializer(instance=instance).data, status=status.HTTP_201_CREATED)
         return Response("Inconsistent data", status=status.HTTP_400_BAD_REQUEST)
 
