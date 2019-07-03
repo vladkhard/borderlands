@@ -76,8 +76,8 @@ WSGI_APPLICATION = 'application.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'djongo',
+        'NAME': os.getenv('DB_NAME', 'citizens-db'),
     }
 }
 
