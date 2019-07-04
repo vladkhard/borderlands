@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -34,8 +36,7 @@ class CitizenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Citizen
-        fields = '__all__'
-
+        exclude = ("creation_date",)
 
     def create(self, validated_data):
         marriage_data = validated_data.pop("marriage")
@@ -57,7 +58,6 @@ class CitizenSerializer(serializers.ModelSerializer):
         citizen.save()
         return citizen
 
-
     def update(self, instance, validated_data):
         marriage_data = validated_data.pop("marriage")
         if marriage_data:
@@ -66,9 +66,9 @@ class CitizenSerializer(serializers.ModelSerializer):
                 serializer.save()
                 instance.marriage = serializer.instance
         
-        passings_data = validated_data.pop("passings")
-
-        return super().update(instance, validated_data)
+        validated_data.pop("passings")
+        citizen = super().update(instance, validated_data)
+        return citizen
 
     def validate(self, validated_data):
         marriage = validated_data.get("marriage")

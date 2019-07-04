@@ -30,7 +30,6 @@ class CitizenView(APIView):
     def patch(self, request, citizen_id):
         instance = get_object_or_404(Citizen, pk=citizen_id)
         data = CitizenSerializer(instance=instance).data
-        data["citizen_id"] = citizen_id
         data.update(request.data)
         serializer = CitizenSerializer(instance=instance, data=data)
         if serializer.is_valid():
@@ -48,3 +47,13 @@ class CitizenView(APIView):
             citizen.save()
             return Response(PassingSerializer(instance=passing).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_200_OK)
+
+
+class LastCitizenView(APIView):
+    view_type = 'citizen'
+
+    def get(self, request):
+        if Citizen.objects.exists():
+            last = Citizen.objects.last()
+            return Response(CitizenSerializer(instance=last).data, status=status.HTTP_200_OK)
+        return Response("There is no data yet", status=status.HTTP_404_NOT_FOUND)
