@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from .models import Citizen, Marriage
+from .models import Citizen, Marriage, Passing
 
 
 class MarriageSerializer(serializers.ModelSerializer):
@@ -22,8 +22,15 @@ class MarriageSerializer(serializers.ModelSerializer):
         return data
 
 
+class PassingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Passing
+        exclude = ('id',)
+
+
 class CitizenSerializer(serializers.ModelSerializer):
     marriage = MarriageSerializer()
+    passings = PassingSerializer(many=True)
 
     class Meta:
         model = Citizen
@@ -32,14 +39,24 @@ class CitizenSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         marriage_data = validated_data.pop("marriage")
-        citizen = Citizen(**validated_data)
-        citizen.save()
-        marriage = Marriage(citizen=citizen, **marriage_data)
-        marriage.save()
+        serializer = MarriageSerializer(data=marriage_data)
+        if serializer.is_valid():
+            marriage = serializer.save()
+
+        passings_data = validated_data.pop("passings")
+        passings = list()
+        for passing in passings_data:
+            serializer = PassingSerializer(data=passing)
+            if serializer.is_valid():
+                passing = serializer.save()
+                passings.append(passing)
+
+        citizen = super().create(validated_data)
         citizen.marriage = marriage
-        citizen.marriage_id = marriage.id
+        citizen.passings = passings
         citizen.save()
         return citizen
+
 
     def update(self, instance, validated_data):
         marriage_data = validated_data.pop("marriage")
@@ -48,6 +65,9 @@ class CitizenSerializer(serializers.ModelSerializer):
             if serializer.is_valid():
                 serializer.save()
                 instance.marriage = serializer.instance
+        
+        passings_data = validated_data.pop("passings")
+
         return super().update(instance, validated_data)
 
     def validate(self, validated_data):
