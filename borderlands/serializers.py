@@ -52,7 +52,7 @@ class CitizenSerializer(serializers.ModelSerializer):
 
     def validate(self, validated_data):
         marriage = validated_data.get("marriage")
-        if marriage:
+        if marriage and marriage["is_married"]:
             cid = self.instance.citizen_id if self.instance else None
             spouse = Citizen.objects.filter(pk=marriage["spouse_id"])
             if not spouse.exists():
@@ -64,6 +64,6 @@ class CitizenSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        if not isinstance(data["citizen_id"], str):
+        if not isinstance(instance.citizen_id, str):
             data["citizen_id"] = instance.citizen_id.hex
         return data
