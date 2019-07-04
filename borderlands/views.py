@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from django.shortcuts import get_object_or_404
 
-from .serializers import CitizenSerializer
+from .serializers import CitizenSerializer, PassingSerializer
 from .models import Citizen
 
 
@@ -35,5 +35,16 @@ class CitizenView(APIView):
         serializer = CitizenSerializer(instance=instance, data=data)
         if serializer.is_valid():
             instance = serializer.save()
-            return Response(CitizenSerializer(instance=instance).data, status=status.HTTP_201_CREATED)
+            return Response(CitizenSerializer(instance=instance).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, citizen_id):
+        data = request.data
+        serializer = PassingSerializer(data=data)
+        if serializer.is_valid():
+            passing = serializer.save()
+            citizen = get_object_or_404(Citizen, pk=citizen_id)
+            citizen.passings.append(passing)
+            citizen.save()
+            return Response(PassingSerializer(instance=passing).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_200_OK)
