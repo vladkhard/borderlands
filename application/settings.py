@@ -77,7 +77,8 @@ WSGI_APPLICATION = 'application.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': os.getenv('DB_NAME', 'citizens-db'),
+        'NAME': os.getenv('MONGO_DB_NAME', 'citizens-db'),
+        'HOST': os.getenv('MONGO_HOST_NAME', 'mongodb://localhost:27017'),
     }
 }
 
