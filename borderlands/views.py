@@ -1,8 +1,11 @@
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
+from django.conf import settings
 
 from .serializers import CitizenSerializer, PassingSerializer
 from .models import Citizen
@@ -57,3 +60,20 @@ class LastCitizenView(APIView):
             last = Citizen.objects.last()
             return Response(CitizenSerializer(instance=last).data, status=status.HTTP_200_OK)
         return Response("There is no data yet", status=status.HTTP_404_NOT_FOUND)
+
+
+class ListCitizenView(ListAPIView):
+    view_type = 'citizen'
+    serializer_class = CitizenSerializer
+
+    def get_queryset(self):
+        return Citizen.objects.all()
+
+    def filter_queryset(self, queryset):
+        if queryset.exists():
+            q = Q()
+            for key, value in self.request.query_params.items():
+                if key in settings.ALLOWED_QUERY_PARAMS:
+                    q &= Q(**{f"{key}__icontains": value})
+            queryset = queryset.filter(q)
+        return queryset

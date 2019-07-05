@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body>
+
+  <h1>Welcome to borderlands app!</h1>
+
+  <p>(Created for demonstational purposes)</p>
+
+  <p>It's a REST API only application, and here is a brief tutorial showing how to use it:</p>
+
+  <ul>
+      <li> To post info about new citizen, send POST request to http://localhost:8000/create-citizen. You should get citizen_id among other data in response.</li>
+      <li> To patch citizen info, or add new info about crossing the border, or simply get info about citizen - send PATCH, PUT and GET requests respectively to http://localhost:8000/{citizen_id} </li>
+      <li> To get info about last user posted to the system, send GET request to http://localhost:8000/last-citizen </li>
+      <li> To get list of all citizens send GET request to http://localhost:8000/list-citizen (accepts query parameters to filter by `first_name`, `last_name` or `phone_number`) </li>
+  </ul>
+
+</body>
+
+</html>
