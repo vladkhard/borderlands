@@ -1,4 +1,4 @@
-django==2.2.4
+django==2.2.8
 uuid==1.30
 djangorestframework==3.9.4
 djongo==1.2.33
